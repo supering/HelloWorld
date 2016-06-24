@@ -1,0 +1,60 @@
+大家都知道，写程序大体步骤为：
+
+1.用编辑器编写源代码，如.c文件。
+
+2.用编译器编译代码生成目标文件，如.o。
+
+3.用链接器连接目标代码生成可执行文件，如.exe。
+
+但如果源文件太多，一个一个编译时就会特别麻烦，于是人们想到，为什么不设计一种类似批处理的程序，来批处理编译源文件呢，于是就有了make工具，它是一个自动化编译工具，你可以使用一条命令实现完全编译。但是你需要编写一个规则文件，make依据它来批处理编译，这个文件就是makefile，所以编写makefile文件也是一个程序员所必备的技能。
+
+对于一个大工程，编写makefile实在是件复杂的事，于是人们又想，为什么不设计一个工具，读入所有源文件之后，自动生成makefile呢，于是就出现了cmake工具，它能够输出各种各样的makefile或者project文件,从而帮助程序员减轻负担。但是随之而来也就是编写cmakelist文件，它是cmake所依据的规则。所以在编程的世界里没有捷径可走，还是要脚踏实地的。
+
+http://my.oschina.net/xunxun/blog/86781
+
+Make (or rather a Makefile) is a buildsystem - it drives the compiler and other build tools to build your code.
+
+CMake is a generator of buildsystems. It can produce Makefiles, it can produce Ninja build files, it can produce KDEvelop or XCode projects, it can produce Visual Studio solutions. From the same starting point, the same CMakeLists.txt file. So if you have a platform-independent project, CMake is a way to make it buildsystem-independent as well.
+
+CMake快速入门（for windows）【转载】 (2013-03-18 16:59:17)
+分类： VC
+1. 下载 CMake，你需要下载'Win32 installer'版本来得到二进制版本的安装文件。
+2. 运行CMake安装程序, 选择你喜欢的位置进行安装。
+3. 通过‘开始’>‘所有程序’>‘CMake 2.6’>‘CMake’来运行CMake（这里假定在简体中文Windows中运行
+2.6版本）
+4. 在"Where is the source code"文本框中，输入或者“browse”到OGRE源代码的根目录(包含OgreMain文件
+夹的文件夹)
+5. 在"Where to build the binaries" 文本框中，输入或者“browse”任何你喜欢的文件夹中——它会被用于
+输出构建结果（lib文件，头文件，dll文件以及执行程序。如果没有这个文件夹系统会帮你创建。注意，你
+可以按照需要声称到不同的文件夹中（但我们先不讨论这些细节）。
+6. 单击屏幕下方的'Configure'按键。
+7. 选择你的目标编译平台，例如"Visual Studio 8 2005"
+8. 当系统提示是否创建构建目录的时候选择'Ok'
+9. 等待configure执行结束
+10. 屏幕上现在会有一些配置设置，并用红色标记(这是用来指出你是第一次看到他们)。你可以在这里手动配置
+这些选项，不过现在我们只需要再次选择'Configure'。
+11. 等运行结束了选择"Generate"按键。
+12. 构建文件将会在你之前选择的文件夹下面产生，这时候就可以退出cmake来进行真正的编译工作。
+以上就是使用CMake的过程！在你之前选择的文件夹中，你会发现有一系列工程文件，就如同之前OGRE版本中存
+在的那些类似。现在只需要找到并打开主项目文件(例如OGRE.sln)。你可以好像支前那样来构建。和以往不同的
+是，现在又一个特殊的工程'ALL_BUILD'被用来快捷的创建所有我们配置的目标工程。值得注意的是，所有的输
+出将会被储存在构建文件夹下面的一个子文件夹中，而不是OGRE源代码的文件夹——因此你可以从一份源代码目
+录中创建多个构建项目。
+关于CMake
+CMake是一个跨平台的构建（build）系统。任何项目要使用CMake构建自己的工程，都需要在纯文本文件中用特
+殊的CMake命令来描述其构建过程。之后在源文件目录中调用CMake，CMake会分析这些文本文件并为指定的平台
+和编译器生成本地（原生？）构建链。CMake还向用户提供了选项，通过这些选项，用户可以自定义构建过程。
+如果你曾在Linux上构建过软件，对于用下面的命令来构建软件的方式，你很可能会很熟悉。
+./configure && make && make install
+要获得CMake能做什么的第一expression（印象？），请设想CMake是“configure”的替代物。CMake现在负责找
+出所有依赖库和自定义构建选项——但是不需要通过命令行去配置，你可以通过CMake提供的图形界面很方便地
+对选项进行选择。完成这一步之后，CMake会生成Makefile文件，然后你就像以前一样，用make来编译和安装软
+件。
+在Windows和Visual Studio 平台上，通常没有 配置 这一步。项目通常提供一个Visual Studio 解决方案
+(solution)文件来打开、编译这个软件。但是，Visual Studio 解决方案文件对于构建的配置几乎毫无帮助。例
+如，很难在有线程支持与无线程支持的ogre构建版之间切换。另外，头文件目录和链接库的位置基本上是固定
+的，如果你的目录布局与创建者的目录布局大有不同，你可能需要痛苦地手工修改每个工程文件来对应你的个人
+设置。CMake添加了这个缺失的配置步骤：一个工程不再自带Visual Studio 解决方案文件，而是让用户通过
+CMake生成Visual Studio 解决方案文件。CMake将找出所有依赖关系，并向你提供选项，让你以开发者所支持的
+方式自定义构建过程。一旦通过CMake配置成功，你将得到一个像以前一样的Visual Studio解决方案文件，然后
+即可以之编译工程。

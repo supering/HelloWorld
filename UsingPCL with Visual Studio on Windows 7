@@ -36,8 +36,6 @@ OpenNI 1.5.4 & 5.1.0
 
 http://blog.csdn.net/wishchin/article/details/10072093
 （三）：搭建开发环境：
-.安装完毕后就测试一下PCL的效果吧，要注意项目对应的包含目录、库目录、库文件（LIB）和运行环境（DLL）。
-用http://www.pointclouds.org/documentation/tutorials/pcl_visualizer.php#pcl-visualizer上面的例程试一试，新建工程，粘贴代码……
 
 在visual studio 下属性管理器-Debug|x64-Microsoft.Cpp.x64.user，在包含目录下添加：
 C:\PCL 1.7.*\3rdParty\Boost\include;
@@ -57,59 +55,6 @@ C:\PCL 1.7.*\lib;
 C:\PCL 1.7.*\OpenNI\Lib;
 
 在属性管理器-链接器-输入-附加依赖项上添加：
-opengl32.lib
-pcl_kdtree_debug.lib
-pcl_io_debug.lib
-pcl_search_debug.lib
-pcl_segmentation_debug.lib
-pcl_range_image_border_extractor_debug.lib
-pcl_apps_debug.lib
-pcl_features_debug.lib
-pcl_filters_debug.lib
-pcl_visualization_debug.lib
-pcl_common_debug.lib
-flann_cpp_s-gd.lib
-libboost_system-vc100-mt-gd-1_47.lib
-libboost_filesystem-vc100-mt-gd-1_47.lib
-libboost_thread-vc100-mt-gd-1_47.lib
-libboost_date_time-vc100-mt-gd-1_47.lib
-libboost_iostreams-vc100-mt-gd-1_47.lib
-openNI.lib
-vtkalglib-gd.lib
-vtkCharts-gd.lib
-vtkCommon-gd.lib
-vtkDICOMParser-gd.lib
-vtkexoIIc-gd.lib
-vtkexpat-gd.lib
-vtkFiltering-gd.lib
-vtkfreetype-gd.lib
-vtkftgl-gd.lib
-vtkGenericFiltering-gd.lib
-vtkGeovis-gd.lib
-vtkGraphics-gd.lib
-vtkhdf5-gd.lib
-vtkHybrid-gd.lib
-vtkImaging-gd.lib
-vtkInfovis-gd.lib
-vtkIO-gd.lib
-vtkjpeg-gd.lib
-vtklibxml2-gd.lib
-vtkmetaio-gd.lib
-vtkNetCDF-gd.lib
-vtkNetCDF_cxx-gd.lib
-vtkpng-gd.lib
-vtkproj4-gd.lib
-vtkRendering-gd.lib
-vtksqlite-gd.lib
-vtksys-gd.lib
-vtktiff-gd.lib
-vtkverdict-gd.lib
-vtkViews-gd.lib
-vtkVolumeRendering-gd.lib
-vtkWidgets-gd.lib
-vtkzlib-gd.lib
-
-in my case:
 pcl_recognition_debug.lib
 pcl_registration_debug.lib
 pcl_segmentation_debug.lib
@@ -132,13 +77,8 @@ pcl_openni_save_image_debug.lib
 pcl_openni_pcd_recorder_debug.lib
 pcl_openni_image_debug.lib
 
-这里要注意PCL引用到的其他库文件一定要加进去，VTK的库很多，而且依赖关系我看得很乱，所以为了方便就全加进去了。
-如果没有加完整，很多信息提示错误的，之前忘了加一个什么库，导致很多error LNK2019，还让我重装了很多次…… 
-注意库要对应debug和release版，debug后面一般都有-gd或者_debug的，看看就能分出来了。对应错了还会有error LNK：
-error LNK2038: mismatch detected for '_ITERATOR_DEBUG_LEVEL': value '2' doesn't match value '0' in  XXXX.......
-这时应该可以看到成功生成的信息了：
-         别着急运行，会发现还没做完的。
-     我们还要把对应的dll加到环境中，可以直接把用到的那些dll放到应用程序搜索到的位置，如cpp对应的目录。（=_=！好笨的方法，不过我就是这样做的……）或者是把dll的目录设置到环境中去（在安装ALL IN ONE 时已经自动添加）
 
-Tips:
-       对于pcl_range_image_border_extractor_debug.lib无法找到问题，先删除包含之，编译通过.
+Method 1. 用cmake build CMakeLists.txt + .cpp 文件，从而生成visual studio的project，不需要再为各个project去设置项目对应的包含目录、库目录、库文件（LIB）和运行环境（DLL）。
+
+Method 2. 直接用visual studio新建project，这样需要手动设置项目对应的包含目录、库目录、库文件（LIB）和运行环境（DLL）。
+用http://www.pointclouds.org/documentation/tutorials/pcl_visualizer.php#pcl-visualizer上面的例程试一试，新建工程，粘贴代码。

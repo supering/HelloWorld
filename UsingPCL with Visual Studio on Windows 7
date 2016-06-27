@@ -1,0 +1,120 @@
+http://blog.csdn.net/u012337034/article/details/38270109
+简介：
+        在Windows下安装PCL点云库的方法大概有两种：其一，all-in-one-installer，这个只有两个版本1.5.1和1.6.0，而且顾名思义，安装方法极其简单，这里就不多做介绍了；其二，build PCL out of source，这里我们可以使用PCL的各种版本，而且随着PCL的更新，我们也可以不断的update。接下来我将会详细介绍如何独立安装PCL点云库。
+配置需求：
+平台：
+        操作系统：Win 7 32bit SP1
+        IDE：VisualStudio 2010 SP1 
+        CMake：Version3.0.0 
+点云库和第三方库：
+        点云库的版本可以随便选了，这里我以最新稳定版本1.7.132bit为例。第三方库版本的选择就没有那么洒脱了，PCL官方给定了指定的版本。
+Boost 1.50.0
+Eigen 3.0.5
+FLANN 1.7.1
+VTK 5.8.0
+QHull 6.2.0.1385
+OpenNI 1.5.4 & 5.1.0
+
+安装步骤：
+第三方库：
+        点云库的build需要第三方库的支持，而且三方库安装的方法很简单，为了方便管理，我建议大家把第三方库安装到同一个固定的目录下。比如我就安装到了C:\pcl-1.7.*\3rdParty下。（环境变量将会在安装的过程中默认添加，之后我们就不用再费事了。
+点云库build：
+        首先将pcl下载的安装文件放到E:\pcl-pcl-1.7.*下，为了方便管理，我们在此目录下创建一个build目录。然后打开CMake，选择好目录。
+        接下来选择build的库，如图所示。
+        接下来点击Configure按键，这里主要判断CMake是否能找到所需依赖库。如果不成功（还有红色行），再次configure红色部分直至全部成功。
+        然后点击Generate按键，等待生成。
+        （optional）先除去一个bug：在io目录下找到png_io.h这个文件，然后把144-147行的这个函数注释掉（否则很多库会编译不通过）
+           然后打开CMake生成的VS2010解决方案进行编译即可，Debug和Release各编译一次。Release下是完美编译的，全部会编译成功；而Debug下可能要编译多次才能补全（可以根据Release生成的文件进行Debug的逐个编译，编译过程会消耗很长时间）。
+            倒数第二步，进行文件的整理操作。
+在3rdParty所在的目录中新建一个lib目录，将刚才build目录下lib目录中的.lib文件全部复制过去；然后在lib目录下新建一个pkgconfig目录，在上述解压包下搜索所有的.pc文件，复制过去。
+在3rdParty所在的目录中新建一个bin目录，将build目录下bin目录中的.exe和.pdb全部复制过去。
+在3rdParty所在的目录中新建一个cmake目录，将build目录下的PCLConfig.cmake和PCLConfigVersion.cmake文件复制过去。
+在3rdParty所在的目录中新建一个include目录，在include目录下新建一个目录pcl-1.7（名字一定是这个），在此目录下新建一个pcl目录，然后把解压包下每个模块中include\pcl\下的文件全部复制过去。
+
+最后一步，添加系统环境变量。首先在Path下添加bin目录，我的是C:\pcl-1.7.*\bin；然后新建一个PCL_ROOT变量名，变量为pcl所在的目录，我的是C:\pcl-1.7.*\3rdParty。
+至此就大功告成了，可以从官网上随便找个例子，然后用CMake生成解决方案，并运行成功。建议大家使用CMake，这样就不用再VS下添加各种目录和库了。
+
+http://blog.csdn.net/wishchin/article/details/10072093
+（三）：搭建开发环境：
+.安装完毕后就测试一下PCL的效果吧，要注意项目对应的包含目录、库目录、库文件（LIB）和运行环境（DLL）。
+用http://www.pointclouds.org/documentation/tutorials/pcl_visualizer.php#pcl-visualizer上面的例程试一试，新建工程，粘贴代码……
+
+在visual studio 下属性管理器-Debug|x64-Microsoft.Cpp.x64.user，在包含目录下添加：
+C:\PCL 1.7.*\3rdParty\Boost\include;
+C:\PCL 1.7.*\3rdParty\Eigen\include;
+C:\PCL 1.7.*\3rdParty\Flann\include;
+C:\PCL 1.7.*\3rdParty\Qhull\include;
+C:\PCL 1.7.*\3rdParty\VTK\include\vtk-5.8;
+C:\PCL 1.7.*\OpenNI\Include;
+C:\PCL 1.7.*\include\pcl-1.5;
+（对应自己机子上PCL的位置，如果为了CMAKE方便很多会放在根目录下。即C:\PCL）
+在库目录下添加：
+C:\PCL 1.7.*\3rdParty\Boost\lib;
+C:\PCL 1.7.*\3rdParty\Qhull\lib;
+C:\PCL 1.7.*\3rdParty\Flann\lib;
+C:\PCL 1.7.*\3rdParty\VTK\lib\vtk-5.8;
+C:\PCL 1.7.*\lib;
+C:\PCL 1.7.*\OpenNI\Lib;
+
+在属性管理器-链接器-输入-附加依赖项上添加：
+opengl32.lib
+pcl_kdtree_debug.lib
+pcl_io_debug.lib
+pcl_search_debug.lib
+pcl_segmentation_debug.lib
+pcl_range_image_border_extractor_debug.lib
+pcl_apps_debug.lib
+pcl_features_debug.lib
+pcl_filters_debug.lib
+pcl_visualization_debug.lib
+pcl_common_debug.lib
+flann_cpp_s-gd.lib
+libboost_system-vc100-mt-gd-1_47.lib
+libboost_filesystem-vc100-mt-gd-1_47.lib
+libboost_thread-vc100-mt-gd-1_47.lib
+libboost_date_time-vc100-mt-gd-1_47.lib
+libboost_iostreams-vc100-mt-gd-1_47.lib
+openNI.lib
+vtkalglib-gd.lib
+vtkCharts-gd.lib
+vtkCommon-gd.lib
+vtkDICOMParser-gd.lib
+vtkexoIIc-gd.lib
+vtkexpat-gd.lib
+vtkFiltering-gd.lib
+vtkfreetype-gd.lib
+vtkftgl-gd.lib
+vtkGenericFiltering-gd.lib
+vtkGeovis-gd.lib
+vtkGraphics-gd.lib
+vtkhdf5-gd.lib
+vtkHybrid-gd.lib
+vtkImaging-gd.lib
+vtkInfovis-gd.lib
+vtkIO-gd.lib
+vtkjpeg-gd.lib
+vtklibxml2-gd.lib
+vtkmetaio-gd.lib
+vtkNetCDF-gd.lib
+vtkNetCDF_cxx-gd.lib
+vtkpng-gd.lib
+vtkproj4-gd.lib
+vtkRendering-gd.lib
+vtksqlite-gd.lib
+vtksys-gd.lib
+vtktiff-gd.lib
+vtkverdict-gd.lib
+vtkViews-gd.lib
+vtkVolumeRendering-gd.lib
+vtkWidgets-gd.lib
+vtkzlib-gd.lib
+这里要注意PCL引用到的其他库文件一定要加进去，VTK的库很多，而且依赖关系我看得很乱，所以为了方便就全加进去了。
+如果没有加完整，很多信息提示错误的，之前忘了加一个什么库，导致很多error LNK2019，还让我重装了很多次…… 
+注意库要对应debug和release版，debug后面一般都有-gd或者_debug的，看看就能分出来了。对应错了还会有error LNK：
+error LNK2038: mismatch detected for '_ITERATOR_DEBUG_LEVEL': value '2' doesn't match value '0' in  XXXX.......
+这时应该可以看到成功生成的信息了：
+         别着急运行，会发现还没做完的。
+     我们还要把对应的dll加到环境中，可以直接把用到的那些dll放到应用程序搜索到的位置，如cpp对应的目录。（=_=！好笨的方法，不过我就是这样做的……）或者是把dll的目录设置到环境中去（在安装ALL IN ONE 时已经自动添加）
+
+Tips:
+       对于pcl_range_image_border_extractor_debug.lib无法找到问题，先删除包含之，编译通过.

@@ -108,6 +108,30 @@ vtkViews-gd.lib
 vtkVolumeRendering-gd.lib
 vtkWidgets-gd.lib
 vtkzlib-gd.lib
+
+in my case:
+pcl_recognition_debug.lib
+pcl_registration_debug.lib
+pcl_segmentation_debug.lib
+pcl_keypoints_debug.lib
+pcl_features_debug.lib
+pcl_tracking_debug.lib
+pcl_filters_debug.lib
+pcl_surface_debug.lib
+pcl_outofcore_debug.lib
+pcl_sample_consensus_debug.lib
+pcl_visualization_debug.lib
+pcl_io_debug.lib
+pcl_search_debug.lib
+pcl_kdtree_debug.lib
+pcl_common_debug.lib
+pcl_octree_debug.lib
+pcl_io_ply_debug.lib
+pcl_people_debug.lib
+pcl_openni_save_image_debug.lib
+pcl_openni_pcd_recorder_debug.lib
+pcl_openni_image_debug.lib
+
 这里要注意PCL引用到的其他库文件一定要加进去，VTK的库很多，而且依赖关系我看得很乱，所以为了方便就全加进去了。
 如果没有加完整，很多信息提示错误的，之前忘了加一个什么库，导致很多error LNK2019，还让我重装了很多次…… 
 注意库要对应debug和release版，debug后面一般都有-gd或者_debug的，看看就能分出来了。对应错了还会有error LNK：

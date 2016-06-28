@@ -34,7 +34,12 @@ OpenNI 1.5.4 & 5.1.0
 最后一步，添加系统环境变量。首先在Path下添加bin目录，我的是C:\pcl-1.7.*\bin；然后新建一个PCL_ROOT变量名，变量为pcl所在的目录，我的是C:\pcl-1.7.*\3rdParty。
 至此就大功告成了，可以从官网上随便找个例子，然后用CMake生成解决方案，并运行成功。建议大家使用CMake，这样就不用再VS下添加各种目录和库了。
 
+如果设为启动项和build在pcl sln下的install项目，pcl会完成安装。最终的exe文件将在C:\Program Files\PCL\bin里。
+通过cmd 可以运行exe，注意要带相应的参数。
+
 http://blog.csdn.net/wishchin/article/details/10072093
+
+
 （三）：搭建开发环境：
 
 在visual studio 下属性管理器-Debug|x64-Microsoft.Cpp.x64.user，在包含目录下添加：

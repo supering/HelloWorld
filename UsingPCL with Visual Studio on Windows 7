@@ -87,3 +87,18 @@ Method 1. 用cmake build CMakeLists.txt + .cpp 文件，从而生成visual studi
 
 Method 2. 直接用visual studio新建project，这样需要手动设置项目对应的包含目录、库目录、库文件（LIB）和运行环境（DLL）。
 用http://www.pointclouds.org/documentation/tutorials/pcl_visualizer.php#pcl-visualizer上面的例程试一试，新建工程，粘贴代码。
+
+Execution：
+
+either
+
+run the .exe in cmd console and define the input parameteres there.
+
+e.g.
+C:\PCL\bin\pcl_pcd2png_debug E:\my_pcl\pcd_viewer\bin\bunny.pcd E:\my_pcl\pcd_viewer\bin\bunny.png
+Or run the .exe directly if it does not take in extra input parameters
+
+or
+
+run in the bin\debug folder by double click
+which cannot take in any inputs.

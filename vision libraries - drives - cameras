@@ -1,0 +1,65 @@
+OpenCV
+PCL
+OpenNI
+
+
+IDE （Visual Studio）
+
+CMake
+
+OS (Windows, Linux)
+
+**************************************************************************
+drives
+******************************************************************************************
+******************************************************************************************* 
+OpenKinect/libfreenect2
+
+Driver for Kinect for Windows v2 (K4W2) devices (release and developer preview).
+
+Note: libfreenect2 does not do anything for either Kinect for Windows v1 or Kinect for Xbox 360 sensors. Use libfreenect1 for those sensors.
+
+If you are using libfreenect2 in an academic context, please cite our work using the following DOI: DOI
+
+This driver supports:
+
+RGB image transfer
+IR and depth image transfer
+registration of RGB and depth images
+Missing features:
+
+firmware updates (see issue #460 for WiP)
+Watch the OpenKinect wiki at www.openkinect.org and the mailing list at https://groups.google.com/forum/#!forum/openkinect for the latest developments and more information about the K4W2 USB protocol.
+
+The API reference documentation is provided here https://openkinect.github.io/libfreenect2/.
+
+Requirements
+
+Hardware requirements
+
+USB 3.0 controller. USB 2 is not supported.
+Intel and NEC USB 3.0 host controllers are known to work. ASMedia controllers are known to not work.
+
+Virtual machines likely do not work, because USB 3.0 isochronous transfer is quite delicate.
+
+Requirements for multiple Kinects
+
+It has been reported to work for up to 5 devices on a high-end PC using multiple separate PCI Express USB3 expansion cards (with NEC controller chip). If you're using Linux, you may have to increase USBFS memory buffers. Depending on the number of Kinects, you may need to use an even larger buffer size. If you're using an expansion card, make sure it's not plugged into an PCI-E x1 slot. A single lane doesn't have enough bandwidth. x8 or x16 slots usually work.
+
+Operating system requirements
+
+Windows 7 (buggy), Windows 8, Windows 8.1, and probably Windows 10
+Debian, Ubuntu 14.04 or newer, probably other Linux distros. Recommend kernel 3.16+ or as new as possible.
+Mac OS X
+
+*********************************************************************
+PCL's actual grabber interface provides a smooth and convenient access to different devices and their drivers, file formats and other sources of data. The first driver that was incorporated is the OpenNI Grabber, which makes it a breeze to request data streams from OpenNI compatible cameras. The cameras that have been tested so far are the Primesense Reference Design, Microsoft Kinect for XBox and Asus Xtion Pro.
+Microsofts Kinect for Windows was not compatible with PCL yet, because it is driven by the Kinect SDK which is not compatible with OpenNI.
+
+Now there is an Open Source package available containing a dll module which functions as bridge between the Kinect SDK, OpenNI and PCL.
+
+********************************************************************************
+********************************************************************************
+3D camera （e.g. Microsoft Kinect ）
+********************************************************************************
+********************************************************************************

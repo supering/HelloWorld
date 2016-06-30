@@ -1,0 +1,24 @@
+Chapter 1. Introduction
+
+In formulating and solving computer vision problems, I have often found it useful to draw
+inspiration from three high-level approaches:
+• Scientific: build detailed models of the image formation process and develop mathematical
+techniques to invert these in order to recover the quantities of interest (where
+necessary, making simplifying assumption to make the mathematics more tractable).
+• Statistical: use probabilistic models to quantify the prior likelihood of your unknowns
+and the noisy measurement processes that produce the input images, then infer the best
+possible estimates of your desired quantities and analyze their resulting uncertainties.
+The inference algorithms used are often closely related to the optimization techniques
+used to invert the (scientific) image formation processes.
+• Engineering: develop techniques that are simple to describe and implement but that
+are also known to work well in practice. Test these techniques to understand their
+limitation and failure modes, as well as their expected computational costs (run-time
+performance).
+
+it is better to think back from the problem at hand to suitable techniques, rather
+than to grab the first technique that you may have heard of.
+
+Chapter 2. Image Information
+
+2.1 Geometric primitives and transformations
+2.2 3D to 2D projections

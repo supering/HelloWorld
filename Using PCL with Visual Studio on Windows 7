@@ -15,7 +15,7 @@ VTK 5.8.0
 QHull 6.2.0.1385
 OpenNI 1.5.4 & 5.1.0
 
-安装步骤：
+安装步骤： http://pointclouds.org/documentation/tutorials/compiling_pcl_windows.php#compiling-pcl-windows
 第三方库：
         点云库的build需要第三方库的支持，而且三方库安装的方法很简单，为了方便管理，我建议大家把第三方库安装到同一个固定的目录下。比如我就安装到了C:\pcl-1.7.*\3rdParty下。（环境变量将会在安装的过程中默认添加，之后我们就不用再费事了。
 点云库build：
@@ -41,7 +41,7 @@ http://blog.csdn.net/wishchin/article/details/10072093
 One can also refer to the PCL tutorial "using PCL on Windows".
 
 （三）：搭建开发环境：
-
+http://pointclouds.org/documentation/tutorials/using_pcl_pcl_config.php#using-pcl-pcl-config
 在visual studio 下属性管理器-Debug|x64-Microsoft.Cpp.x64.user，在包含目录下添加：
 C:\PCL 1.7.*\3rdParty\Boost\include;
 C:\PCL 1.7.*\3rdParty\Eigen\include;

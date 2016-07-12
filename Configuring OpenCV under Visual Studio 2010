@@ -1,0 +1,198 @@
+http://www.cnblogs.com/woshitianma/p/3853447.html
+
+The latest installer from OpenCV is v 2.4.9.
+
+Therefore, there are two approaches to acquire OpenCV
+
+First, install OpenCV v 2.4.9 by using the office install.exe
+
+下载完后得到文件OpenCV 2.4.8，双击后会提示解压到某个地方，推荐放到D:\Program Files\下，比如D:\Program Files，（因为OpenCV项目文件打包的时候，根目录就是opencv，所以我们不需要额外的新建一个名为opencv的文件夹，然后再解压，那是 多此一举的事情）然后点击Extract按钮
+
+其中，build里面是使用OpenCV相关的文件，我们如果只是使用OpenCV的话呢，就只用管build里面的内容。下面的sources文件夹你嫌烦，你嫌占硬盘空间，完全可以删掉。但是需要注意的是，官方示例集，也就是samples文件夹里面的示例程序，在sources文件夹里面躺着呢，所以，如果真是要删的话，还是想清楚哦。sources里面是源代码。想查看完整的源代码需要用cmake来“解包”，如何“解包”大家百度一下就可以，或者下次浅墨来专门讲一讲。这里就先不多说了。
+Then
+
+2.配置环境变量
+
+这步的配置方法如下:
+计算机->（右键）属性->高级系统设置->高级（标签）->环境变量->（双击）path（用户，系统里面的path任选其一）->在变量值里面添加相应的路径。
+对于32位系统，就添加：
+”…… opencv\build\x86\vc10\bin”
+ 
+而对于64位系统，可以两个都添加上：
+”…… opencv\build\x86\vc10\bin”
+和”…… opencv\build\x64\vc10\bin”，
+这样，到时候才可以在编译器Win32和X64中来回切换都吃得开，游刃有余~
+
+ 
+注：变量值实际为bin文件夹的路径；D表示OpenCV安装于D盘；X64表示运行系统环境位64位系统，若安装于32位系统，应为X86；vc10表示编译环境为Microsoft Visual Studio 2010；变量添加完成后需要注销系统，才会生效。
+
+3.工程包含（include）目录的配置
+之前看过的好多博文都说“每次新建工程都要重新配置”，其实不用这样麻烦的。
+看我之前DirectX配置的相关博文的朋友们应该都知道，有一招叫属性管理器，点进去，到
+<视图>--<属性管理器>
+在新出现的“属性管理器”工作区中，点击项目->Debug|Win64->Microsoft.Cpp.Win64.userDirectories（反键属性，或者双击）即可打开属性页面。
+在
+【通用属性】 ->【VC++目录】 ->【包含目录中】添加上
+D:\Program Files\opencv\build\include
+D:\Program Files\opencv\build\include\opencv
+D:\Program Files\opencv\build\include\opencv2 这三个目录。当然，这是之前把OpenCV解压到D:\Program Files\下的情况。实际的路径还要看你自己把OpenCV解压到了哪个目录下，根据实际情况来调节。
+4.工程库（lib）目录的配置
+其实这步和上一步差不多，属性管理器”工作区中，点击项目 ->Debug|Win32->Microsoft.Cpp.Win32.userDirectories（反键属性，或者双击）即可打开属 性页面。【通用属性】 ->【VC++目录】 ->【库目录】。
+添加上D:\ProgramFiles\opencv\build\x86\vc10\lib这个路径。
+
+5.链接库的配置
+
+ 
+属性管理器”工作区中，点击项目 ->Debug|Win32->Microsoft.Cpp.Win32.userDirectories（反键属性，或者双击）即可打开属 性页面。【通用属性】 ->【链接器】->【输入】->【附加的依赖项】
+添加如下的内容：
+
+opencv_ml249d.lib
+opencv_calib3d249d.lib
+opencv_contrib249d.lib
+opencv_core249d.lib
+opencv_features2d249d.lib
+opencv_flann249d.lib
+opencv_gpu249d.lib
+opencv_highgui249d.lib
+opencv_imgproc249d.lib
+opencv_legacy249d.lib
+opencv_objdetect249d.lib
+opencv_ts249d.lib
+opencv_video249d.lib
+opencv_nonfree249d.lib
+opencv_ocl249d.lib
+opencv_photo249d.lib
+opencv_stitching249d.lib
+opencv_superres249d.lib
+opencv_videostab249d.lib
+opencv_objdetect249.lib
+opencv_ts249.lib
+opencv_video249.lib
+opencv_nonfree249.lib
+opencv_ocl249.lib
+opencv_photo249.lib
+opencv_stitching249.lib
+opencv_superres249.lib
+opencv_videostab249.lib
+opencv_calib3d249.lib
+opencv_contrib249.lib
+opencv_core249.lib
+opencv_features2d249.lib
+opencv_flann249.lib
+opencv_gpu249.lib
+opencv_highgui249.lib
+opencv_imgproc249.lib
+opencv_legacy249.libopencv_ml249.lib
+Debug文件库名有d结尾，Release没有，如 opencv_ts248d.lib和opencv_ts248.lib
+不过我一般是在这里把带d和不带d的统统写在这里，因为这里是以后创建所有工程时都会继承的公共属性。
+
+
+Method 2. using OpenCV 3.1 as library, instead of installing it.
+1. copy the "build" and "source" folders to the local drive (E:\opencv3.1(64))
+2. configure the Visual Studio 2010 as
+
+include 
+E:\opencv3.1(64)\DEBUG\include
+E:\opencv3.1(64)\DEBUG\include\opencv
+E:\opencv3.1(64)\DEBUG\include\opencv2
+E:\opencv3.1(64)\RELEASE\include
+E:\opencv3.1(64)\RELEASE\include\opencv
+E:\opencv3.1(64)\RELEASE\include\opencv2
+
+lib
+
+E:\opencv3.1(64)\DEBUG\x64\vc10\lib
+E:\opencv3.1(64)\RELEASE\x64\vc10\lib
+
+opencv_aruco310d.lib
+opencv_bgsegm310d.lib
+opencv_bioinspired310d.lib
+opencv_calib3d310d.lib
+opencv_ccalib310d.lib
+opencv_core310d.lib
+opencv_datasets310d.lib
+opencv_dnn310d.lib
+opencv_dpm310d.lib
+opencv_face310d.lib
+opencv_features2d310d.lib
+opencv_flann310d.lib
+opencv_fuzzy310d.lib
+opencv_highgui310d.lib
+opencv_imgcodecs310d.lib
+opencv_imgproc310d.lib
+opencv_line_descriptor310d.lib
+opencv_ml310d.lib
+opencv_objdetect310d.lib
+opencv_optflow310d.lib
+opencv_photo310d.lib
+opencv_plot310d.lib
+opencv_reg310d.lib
+opencv_rgbd310d.lib
+opencv_saliency310d.lib
+opencv_shape310d.lib
+opencv_stereo310d.lib
+opencv_stitching310d.lib
+opencv_structured_light310d.lib
+opencv_superres310d.lib
+opencv_surface_matching310d.lib
+opencv_text310d.lib
+opencv_tracking310d.lib
+opencv_ts310d.lib
+opencv_video310d.lib
+opencv_videoio310d.lib
+opencv_videostab310d.lib
+opencv_xfeatures2d310d.lib
+opencv_ximgproc310d.lib
+opencv_xobjdetect310d.lib
+opencv_xphoto310d.lib
+opencv_aruco310.lib
+opencv_bgsegm310.lib
+opencv_bioinspired310.lib
+opencv_calib3d310.lib
+opencv_ccalib310.lib
+opencv_core310.lib
+opencv_datasets310.lib
+opencv_dnn310.lib
+opencv_dpm310.lib
+opencv_face310.lib
+opencv_features2d310.lib
+opencv_flann310.lib
+opencv_fuzzy310.lib
+opencv_highgui310.lib
+opencv_imgcodecs310.lib
+opencv_imgproc310.lib
+opencv_line_descriptor310.lib
+opencv_ml310.lib
+opencv_objdetect310.lib
+opencv_optflow310.lib
+opencv_photo310.lib
+opencv_plot310.lib
+opencv_reg310.lib
+opencv_rgbd310.lib
+opencv_saliency310.lib
+opencv_shape310.lib
+opencv_stereo310.lib
+opencv_stitching310.lib
+opencv_structured_light310.lib
+opencv_superres310.lib
+opencv_surface_matching310.lib
+opencv_text310.lib
+opencv_tracking310.lib
+opencv_ts310.lib
+opencv_video310.lib
+opencv_videoio310.lib
+opencv_videostab310.lib
+opencv_viz310.lib
+opencv_xfeatures2d310.lib
+opencv_ximgproc310.lib
+opencv_xobjdetect310.lib
+opencv_xphoto310.lib
+
+3. configuring the global system settings
+
+add to path
+
+E:\opencv3.1(64)\RELEASE\x64\vc10\bin;E:\opencv3.1(64)\DEBUG\x64\vc10\bin
+
+
+

@@ -1,0 +1,8 @@
+1、概述：
+矩函数在图像分析中有着广泛的应用，如模式识别、目标分类、目标识别与方位估计、图像编码与重构等。一个从一幅数字图形中计算出来的矩集，通常描述了该图像形状的全局特征，并提供了大量的关于该图像不同类型的几何特性信息，比如大小、位置、方向及形状等。图像矩的这种特性描述能力被广泛的应用在各种图像处理、计算机视觉和机器人技术领域的目标识别与方位估计中。一阶矩与形状有关，二阶矩显示曲线围绕直线平均值的扩展程度，三阶矩则是关于平均值的对称性的测量。由二阶矩和三阶矩可以导出一组共七个不变矩。不变矩是图像的统计特性，满足平移、伸缩、旋转均不变的不变性，在图像识别领域得到了广泛的应用。
+2、不变矩的物理含义：
+如果把图像看成是一块质量密度不均匀的薄板，其图像的灰度分布函数f(x,y)就是薄板的密度分布函数，则其各阶矩有着不同的含义，如零阶矩表示它的总质量；一阶矩表示它的质心；二阶矩又叫惯性矩，表示图像的大小和方向。事实上，如果仅考虑阶次为2的矩集，则原始图像等同于一个具有确定的大小、方向和离心率，以图像质心为中心且具有恒定辐射率的椭圆。由三阶矩以下矩构成的七个矩不变量具有平移、旋转和尺度不变性等等。当密度分布函数发生改变时，图像的实质没有改变，仍然可以看做一个薄板，只是密度分布有所改变。虽然此时各阶矩的值可能发生变化，但由各阶矩计算出的不变矩仍具有平移、旋转和尺度不变性。通过这个思想，可对图像进行简化处理，保留最能反映目标特性的信息，再用简化后的图像计算不变矩特征，可减少计算量。
+3、利弊：
+研究表明，只有基于二阶矩的不变矩对二维物体的描述才是真正的与旋转、平移和尺度无关的。较高阶的矩对于成像过程中的误差，微小的变形等因素非常敏感，所以相应的不变
+
+In mathematics, a moment is a specific quantitative measure, used in both mechanics and statistics, of the shape of a set of points. If the points represent mass, then the zeroth moment is the total mass, the first moment divided by the total mass is the center of mass, and the second moment is the rotational inertia. If the points represent probability density, then the zeroth moment is the total probability (i.e. one), the first moment is the mean, the second central moment is the variance, the third moment is the skewness, and the fourth moment (with normalization and shift) is the kurtosis. The mathematical concept is closely related to the concept of moment in physics.

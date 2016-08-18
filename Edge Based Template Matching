@@ -1,0 +1,261 @@
+http://www.codeproject.com/Articles/99457/Edge-Based-Template-Matching
+Introduction
+
+Template matching is an image processing problem to find the location of an object using a template image in another search image when its pose (X, Y, θ) is unknown. In this article, we implement an algorithm that uses an object’s edge information for recognizing the object in the search image.
+
+Background
+
+Template matching is inherently a tough problem due to its speed and reliability issues. The solution should be robust against brightness changes when an object is partially visible or mixed with other objects, and most importantly, the algorithm should be computationally efficient. There are mainly two approaches to solve this problem, gray value based matching (or area based matching) and feature based matching (non area based).
+
+Gray value based approach: In gray value based matching, the Normalized Cross Correlation (NCC) algorithm is known from old days. This is typically done at every step by subtracting the mean and dividing by the standard deviation. The cross correlation of template t(x, y) with a sub image f(x, y) is:
+
+
+
+Where n is the number of pixels in t(x, y) and f(x, y). [Wiki]
+
+Though this method is robust against linear illumination changes, the algorithm will fail when the object is partially visible or the object is mixed with other objects. Moreover, this algorithm is computationally expensive since it needs to compute the correlation between all the pixels in the template image to the search image.
+
+Feature based approach: Several methods of feature based template matching are being used in the image processing domain. Like edge based object recognition where the object edges are features for matching, in Generalized Hough transform, an object’s geometric features will be used for matching.
+
+In this article, we implement an algorithm that uses an object’s edge information for recognizing the object in a search image. This implementation uses the Open-Source Computer Vision library as a platform.
+
+Compiling the example code
+
+We are using OpenCV 2.0 and Visual studio 2008 to develop this code. To compile the example code, we need to install OpenCV.
+
+OpenCV can be downloaded free from here. OpenCV (Open Source Computer Vision) is a library of programming functions for real time computer vision. Download OpenCV and install it in your system. Installation information can be read from here.
+
+We need to configure our Visual Studio environment. This information can be read from here.
+
+The algorithm
+
+Here, we are explaining an edge based template matching technique. An edge can be defined as points in a digital image at which the image brightness changes sharply or has discontinuities. Technically, it is a discrete differentiation operation, computing an approximation of the gradient of the image intensity function.
+
+There are many methods for edge detection, but most of them can be grouped into two categories: search-based and zero-crossing based. The search-based methods detect edges by first computing a measure of edge strength, usually a first-order derivative expression such as the gradient magnitude, and then searching for local directional maxima of the gradient magnitude using a computed estimate of the local orientation of the edge, usually the gradient direction. Here, we are using such a method implemented by Sobel known as Sobel operator. The operator calculates the gradient of the image intensity at each point, giving the direction of the largest possible increase from light to dark and the rate of change in that direction.
+
+We are using these gradients or derivatives in X direction and Y direction for matching.
+
+This algorithm involves two steps. First, we need to create an edge based model of the template image, and then we use this model to search in the search image.
+
+Creating an edge based template model
+
+We first create a data set or template model from the edges of the template image that will be used for finding the pose of that object in the search image.
+
+Here we are using a variation of Canny’s edge detection method to find the edges. You can read more on Canny’s edge detection here. For edge extraction, Canny uses the following steps:
+
+Step 1: Find the intensity gradient of the image
+
+Use the Sobel filter on the template image which returns the gradients in the X (Gx) and Y (Gy) direction. From this gradient, we will compute the edge magnitude and direction using the following formula:
+
+
+
+
+
+We are using an OpenCV function to find these values.
+
+cvSobel( src, gx, 1,0, 3 ); //gradient in X direction
+cvSobel( src, gy, 0, 1, 3 ); //gradient in Y direction
+
+for( i = 1; i < Ssize.height-1; i++ )
+{
+    for( j = 1; j < Ssize.width-1; j++ )
+    {          
+        _sdx = (short*)(gx->data.ptr + gx->step*i);
+        _sdy = (short*)(gy->data.ptr + gy->step*i);
+        fdx = _sdx[j]; fdy = _sdy[j];
+        // read x, y derivatives
+
+        //Magnitude = Sqrt(gx^2 +gy^2)
+        MagG = sqrt((float)(fdx*fdx) + (float)(fdy*fdy));
+        //Direction = invtan (Gy / Gx)
+        direction =cvFastArctan((float)fdy,(float)fdx);
+        magMat[i][j] = MagG;
+            
+        if(MagG>MaxGradient)
+            MaxGradient=MagG;
+            // get maximum gradient value for normalizing.
+
+            
+        // get closest angle from 0, 45, 90, 135 set
+        if ( (direction>0 && direction < 22.5) || 
+              (direction >157.5 && direction < 202.5) || 
+              (direction>337.5 && direction<360)  )
+            direction = 0;
+        else if ( (direction>22.5 && direction < 67.5) || 
+                  (direction >202.5 && direction <247.5)  )
+            direction = 45;
+        else if ( (direction >67.5 && direction < 112.5)||
+                  (direction>247.5 && direction<292.5) )
+            direction = 90;
+        else if ( (direction >112.5 && direction < 157.5)||
+                  (direction>292.5 && direction<337.5) )
+            direction = 135;
+        else
+            direction = 0;
+            
+        orients[count] = (int)direction;
+        count++;
+    }
+}
+Once the edge direction is found, the next step is to relate the edge direction that can be traced in the image. There are four possible directions describing the surrounding pixels: 0 degrees, 45 degrees, 90 degrees, and 135 degrees. We assign all the directions to any of these angles.
+
+Step 2: Apply non-maximum suppression
+
+After finding the edge direction, we will do a non-maximum suppression algorithm. Non-maximum suppression traces the left and right pixel in the edge direction and suppresses the current pixel magnitude if it is less than the left and right pixel magnitudes. This will result in a thin image.
+
+for( i = 1; i < Ssize.height-1; i++ )
+{
+    for( j = 1; j < Ssize.width-1; j++ )
+    {
+        switch ( orients[count] )
+        {
+            case 0:
+                leftPixel  = magMat[i][j-1];
+                rightPixel = magMat[i][j+1];
+                break;
+            case 45:
+                leftPixel  = magMat[i-1][j+1];
+                rightPixel = magMat[i+1][j-1];
+                break;
+            case 90:
+                leftPixel  = magMat[i-1][j];
+                rightPixel = magMat[i+1][j];
+                break;
+            case 135:
+                leftPixel  = magMat[i-1][j-1];
+                rightPixel = magMat[i+1][j+1];
+                break;
+        }
+        // compare current pixels value with adjacent pixels
+        if (( magMat[i][j] < leftPixel ) || (magMat[i][j] < rightPixel ) )
+            (nmsEdges->data.ptr + nmsEdges->step*i)[j]=0;
+        Else
+            (nmsEdges->data.ptr + nmsEdges->step*i)[j]=
+                                 (uchar)(magMat[i][j]/MaxGradient*255);
+        count++;
+    }
+}
+Step 3: Do hysteresis threshold
+
+Doing the threshold with hysteresis requires two thresholds: high and low. We apply a high threshold to mark out thosee edges we can be fairly sure are genuine. Starting from these, using the directional information derived earlier, other edges can be traced through the image. While tracing an edge, we apply the lower threshold, allowing us to trace faint sections of edges as long as we find a starting point.
+
+_sdx = (short*)(gx->data.ptr + gx->step*i);
+_sdy = (short*)(gy->data.ptr + gy->step*i);
+fdx = _sdx[j]; fdy = _sdy[j];
+    
+MagG = sqrt(fdx*fdx + fdy*fdy); //Magnitude = Sqrt(gx^2 +gy^2)
+DirG =cvFastArctan((float)fdy,(float)fdx);     //Direction = tan(y/x)
+
+////((uchar*)(imgGDir->imageData + imgGDir->widthStep*i))[j]= MagG;
+flag=1;
+if(((double)((nmsEdges->data.ptr + nmsEdges->step*i))[j]) < maxContrast)
+{
+    if(((double)((nmsEdges->data.ptr + nmsEdges->step*i))[j])< minContrast)
+    {
+        (nmsEdges->data.ptr + nmsEdges->step*i)[j]=0;
+        flag=0; // remove from edge
+        ////((uchar*)(imgGDir->imageData + imgGDir->widthStep*i))[j]=0;
+    }
+    else
+    {   // if any of 8 neighboring pixel is not greater than max contraxt remove from edge
+        if( (((double)((nmsEdges->data.ptr + nmsEdges->step*(i-1)))[j-1]) < maxContrast) &&
+            (((double)((nmsEdges->data.ptr + nmsEdges->step*(i-1)))[j]) < maxContrast)   &&
+            (((double)((nmsEdges->data.ptr + nmsEdges->step*(i-1)))[j+1]) < maxContrast) &&
+            (((double)((nmsEdges->data.ptr + nmsEdges->step*i))[j-1]) < maxContrast)     &&
+            (((double)((nmsEdges->data.ptr + nmsEdges->step*i))[j+1]) < maxContrast)     &&
+            (((double)((nmsEdges->data.ptr + nmsEdges->step*(i+1)))[j-1]) < maxContrast) &&
+            (((double)((nmsEdges->data.ptr + nmsEdges->step*(i+1)))[j]) < maxContrast)   &&
+            (((double)((nmsEdges->data.ptr + nmsEdges->step*(i+1)))[j+1]) < maxContrast))
+        {
+            (nmsEdges->data.ptr + nmsEdges->step*i)[j]=0;
+            flag=0;
+            ////((uchar*)(imgGDir->imageData + imgGDir->widthStep*i))[j]=0;
+        }
+    }
+}
+Step 4: Save the data set
+
+After extracting the edges, we save the X and Y derivatives of the selected edges along with the coordinate information as the template model. These coordinates will be rearranged to reflect the start point as the center of gravity.
+
+Find the edge based template model
+
+The next task in the algorithm is to find the object in the search image using the template model. We can see the model we created from the template image which contains a set of points:  , and its gradients in X and Y direction  , where i = 1…n, n is the number of elements in the Template (T) data set.
+
+We can also find the gradients in the search image (S)  , where u = 1...number of rows in the search image, v = 1… number of columns in the search image.
+
+In the matching process, the template model should be compared to the search image at all locations using a similarity measure. The idea behind similarity measure is to take the sum of all normalized dot products of gradient vectors of the template image and search the image over all points in the model data set. This results in a score at each point in the search image. This can be formulated as follows:
+
+
+
+In case there is a perfect match between the template model and the search image, this function will return a score 1. The score corresponds to the portion of the object visible in the search image. In case the object is not present in the search image, the score will be 0.
+
+cvSobel( src, Sdx, 1, 0, 3 );  // find X derivatives
+cvSobel( src, Sdy, 0, 1, 3 ); // find Y derivatives
+for( i = 0; i < Ssize.height; i++ )
+{
+    for( j = 0; j < Ssize.width; j++ )
+    { 
+        partialSum = 0; // initilize partialSum measure
+        for(m=0;m<noOfCordinates;m++)
+        {
+            curX    = i + cordinates[m].x ;    // template X coordinate
+            curY    = j + cordinates[m].y ; // template Y coordinate
+            iTx    = edgeDerivativeX[m];    // template X derivative
+            iTy    = edgeDerivativeY[m];    // template Y derivative
+
+            if(curX<0 ||curY<0||curX>Ssize.height-1 ||curY>Ssize.width-1)
+                continue;
+                     
+            _Sdx = (short*)(Sdx->data.ptr + Sdx->step*(curX));
+            _Sdy = (short*)(Sdy->data.ptr + Sdy->step*(curX));
+                        
+            iSx=_Sdx[curY]; // get curresponding  X derivative from source image
+            iSy=_Sdy[curY];// get curresponding  Y derivative from source image
+                        
+            if((iSx!=0 || iSy!=0) && (iTx!=0 || iTy!=0))
+            {
+                //partial Sum  = Sum of(((Source X derivative* Template X drivative)
+                //+ Source Y derivative * Template Y derivative)) / Edge
+                //magnitude of(Template)* edge magnitude of(Source))
+                partialSum = partialSum + ((iSx*iTx)+(iSy*iTy))*
+                            (edgeMagnitude[m] * matGradMag[curX][curY]);
+                                    
+            }
+In practical situations, we need to speed up the searching procedure. This can be achieved using various methods. The first method is using the property of averaging. When finding the similarity measure, we need not evaluate for all points in the template model if we can set a minimum score (Smin) for the similarity measure. For checking the partial score Su,v at a particular point J, we have to find the partial sum Sm. Sm at point m can be defines as follows:
+
+
+
+It is evident that the remaining terms of the sum are smaller or equal to 1. So we can stop the evaluation if  .
+
+Another criterion can be that the partial score at any point should be greater than the minimum score. I.e.,  . When this condition is used, matching will be extremely fast. But the problem is, if the missing part of the object is checked first, the partial sum will be low. In that case, that instance of the object will not be considered as a match. We can modify this with another criterion where we check the first part of the template model with a safe stopping criteria and the remaining with a hard criteria,  . The user can specify a greediness parameter (g) where the fraction of the template model is examined with a hard criteria. So that if g=1, all points in the template model are checked with the hard criteria, and if g=0, all the points will be checked with a safe criteria only. We can formulate this procedure as follows.
+
+The evaluation of the partial score can be stopped at:
+
+
+
+// stoping criterias to search for model
+double normMinScore = minScore /noOfCordinates; // precompute minumum score 
+double normGreediness = ((1- greediness * minScore)/(1-greediness)) /noOfCordinates;
+// precompute greedniness
+
+sumOfCoords = m + 1;
+partialScore = partialSum /sumOfCoords ;
+// check termination criteria
+// if partial score score is less than the score than
+// needed to make the required score at that position
+// break serching at that coordinate.
+if( partialScore < (MIN((minScore -1) + 
+        normGreediness*sumOfCoords,normMinScore*  sumOfCoords)))
+    break;
+This similarity measure has several advantages: the similarity measure is invariant to non-linear illumination changes because all gradient vectors are normalized. Since there is no segmentation on edge filtering, it will show the true invariance against arbitrary changes in illumination. More importantly, this similarity measure is robust when the object is partially visible or mixed with other objects.
+
+Enhancements
+
+There are various enhancements possible for this algorithm. For speeding up the search process further, a pyramidal approach can be used. In this case, the search is started at low resolution with a small image size. This corresponds to the top of the pyramid. If the search is successful at this stage, the search is continued at the next level of the pyramid, which represents a higher resolution image. In this manner, the search is continued, and consequently, the result is refined until the original image size, i.e., the bottom of the pyramid is reached.
+
+Another enhancement is possible by extending the algorithm for rotation and scaling. This can be done by creating template models for rotation and scaling and performing search using all these template models.
+
+
+related topics:
+image similarity check: 
+http://docs.opencv.org/3.1.0/d5/dc4/tutorial_video_input_psnr_ssim.html
